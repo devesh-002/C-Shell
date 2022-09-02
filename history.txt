@@ -1,0 +1,19 @@
+ls -als -al
+ls -al
+ls -als -al
+ls -al
+ls -al ../../../
+ls -al
+ls -a -l ..
+ls -la ..
+ls ~
+ls -al test .. ~
+ls -l
+ls -al
+ls -l
+cd test
+history
+history 21
+ls als testls testcd testls
+cd ..
+cd testls testcd testlsdiscoverlsdiscoverdiscoverdiscoverdiscoverdiscoverdiscoverdiscoverdiscoverdiscoverdiscoverdiscoverdiscover -ddiscoverdiscover -fdiscover . aa.txtdiscover . aa.txtdiscover . aa.txtdiscover . aa.txtdiscover . aa.txtdiscover . -f aa.txtdiscover . -d aa.txtdiscover ./test aa.txtecho cdcd testcd ..lscd testcd ..lsls -alls -ldiscover discoverdiscover . aa.txtdiscover aa.txtsleep 2sleep 2sleep 2[A
