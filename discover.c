@@ -12,6 +12,7 @@ void initialise_discover()
     flag_f = 0;
     done = 0;
     search = 0;
+    filename[0] = '\0';
 }
 void tokeniser_discover(char *token1)
 {
@@ -38,7 +39,23 @@ void tokeniser_discover(char *token1)
         strcpy(dirname, mydir);
         done = 1;
     }
-    else if (done == 0)
+     else  if (token1[0] == '"' )
+    {
+        if (token1[0] == '"')
+        {
+            char buffer_use[MAX_SIZE];
+            int i;
+            for ( i = 1; i < strlen(token1) - 1; i++)
+            {
+                buffer_use[i - 1] = token1[i];
+            }
+            buffer_use[i-1]='\0';
+            
+            strcpy(filename, buffer_use);
+        }
+        
+    }
+    else
     {
         if (token1[0] == '/')
         {
@@ -60,27 +77,23 @@ void tokeniser_discover(char *token1)
         strcpy(dirname, path);
         done++;
     }
-    else if (done == 1)
-    {
-        // if (token1[0] == '/')
-        // {
-        //     struct stat st;
+    // if (token1[0] == '/')
+    // {
+    //     struct stat st;
 
-        //     stat(token1, &st);
-        //     strcpy(filename, token1);
+    //     stat(token1, &st);
+    //     strcpy(filename, token1);
 
-        //     return;
-        // }
-        // char path[MAX_SIZE * 3];
+    //     return;
+    // }
+    // char path[MAX_SIZE * 3];
 
-        // strcpy(path, mydir);
-        // strcat(path, "/");
-        // strcat(path, token1);
+    // strcpy(path, mydir);
+    // strcat(path, "/");
+    // strcat(path, token1);
 
-        // struct stat st; // check if directory or file and return path
-        // stat(path, &st);
-        strcpy(filename, token1);
-    }
+    // struct stat st; // check if directory or file and return path
+    // stat(path, &st);
 }
 void pathPrinter(char *file, int dir)
 {
@@ -240,6 +253,7 @@ void discoverOut(char *path)
 }
 void discoverSearch(char *path)
 {
+    
     if ((flag_d == 0 && flag_f == 0) || (flag_d == 1 && flag_f == 1))
     {
         struct dirent **namelist;
@@ -258,6 +272,7 @@ void discoverSearch(char *path)
             strcpy(fileChecker, buff_useless);
             strcat(fileChecker, namelist[i]->d_name);
             struct stat st;
+
             stat(fileChecker, &st);
             if (S_ISREG(st.st_mode) == 0)
             {
@@ -404,14 +419,14 @@ int discover(char *cmd)
     {
         tokeniser_discover(token1);
     }
-    if (done == 0)
+    if (filename[0] == '\0')
     {
         discoverOut(dirname);
         return 0;
     }
-    else if (done == 1)
+    else
     {
-        printf("%s\n", filename);
+        // printf("%s\n", filename);
         discoverSearch(dirname);
     }
     if (search == 0)

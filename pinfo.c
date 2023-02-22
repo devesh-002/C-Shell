@@ -9,8 +9,8 @@ int pinfo(char *command)
     char *temp = strtok(buf1, " ");
     temp = strtok(NULL, " ");
     if (temp != NULL)
-    {
-        temp[strlen(temp) - 1] = '\0';
+    {        
+        temp[strlen(temp) +1] = '\0';
 
         for (int i = strlen(temp) - 1; i >= 0; i--)
         {
@@ -19,7 +19,10 @@ int pinfo(char *command)
                 return -1;
             }
         }
+
         pid = atoi(temp);
+        printf("%d\n",pid);
+
     }
     snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
     // freopen("output.txt", "w", stdout);

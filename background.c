@@ -20,32 +20,61 @@ void checkIfProcessIsOver()
 {
     pid_t pid;
     int status;
-    pid = waitpid(-1, &status, WNOHANG);
-    // printf("%d",pid);
-    for (int x = 0; x < bgProcessNum; x++)
+    int forestatus;
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
     {
-        if (pid < 0)
+        // for (int x = 0; x < bgProcessNum; x++)
+        // {
+
+        // }
+
+        for (int x = 0; x < totalbgJobs; x++)
         {
-            perror(RED "Error in process over" RESET);
-        }
-        int exit = WEXITSTATUS(status);
-        if ((WIFEXITED(status) && pid == processes[x].pid))
-        {
-            if (exit == 0)
+            if (pid == jobsArr[x].pid)
             {
-                printf("Exited normally with status 0\n");
-                printDetails();
+                if (WIFSTOPPED(status))
+                {
+                    jobsArr[x].status = 'T';
+                }
+                else if (WIFCONTINUED(status))
+                {
+                    jobsArr[x].status = 'R';
+                }
+                else if (WIFEXITED(status))
+                {
+                    if (pid < 0)
+                    {
+                        perror(RED "Error in process over" RESET);
+                    }
+                    int exit = WEXITSTATUS(status);
+
+                    if (exit == 0)
+                    {
+                        printf("\nProcess %d exited normally with status 0\n", pid);
+                        if (forepid == pidOfShell)
+                        {
+                            printDetails();
+                        }
+                        else if (kill(forepid, 0))
+                        {
+                            printDetails();
+                        }
+                    }
+                    else
+                    {
+                        printf("Some error in exiting, status:%d\n", exit);
+                        printDetails();
+                    }
+                    fflush(stdout);
+                    delProcess(pid);
+
+                    jobsArr[x].status = 'E';
+                }
             }
-            else
-            {
-                printf("Some error in exiting, status:%d\n", exit);
-            }
-            fflush(stdout);
-            delProcess(pid);
         }
     }
 }
-int background(char *cmd)
+int background(char *cmd, int countAndChar)
 {
     char buf1[200];
     char *arr[MAX_SIZE];
@@ -63,17 +92,18 @@ int background(char *cmd)
     }
     arr[i] = NULL;
     pid_t pid = fork();
-        setpgid(0, 0);
+    setpgid(0, 0);
     if (pid < 0)
     {
         perror(RED "fork not working" RESET);
     }
-    else if(!pid)
+    else if (!pid)
     {
-        pid_t check=getpid();
-        if(!(execvp(arr[0],arr)));
+        pid_t check = getpid();
+        if (!(execvp(arr[0], arr)))
+            ;
         {
-            perror(RED"Error in execvp\n"RESET);
+            perror(RED "Error in execvp\n" RESET);
         }
         return 0;
     }
@@ -82,6 +112,12 @@ int background(char *cmd)
         processes[bgProcessNum].pid = pid;
         strcpy(processes[bgProcessNum].jobname, arr[0]);
         bgProcessNum += 1;
+        jobsArr[totalbgJobs].pid = pid;
+        jobsArr[totalbgJobs].jobid = totalbgJobs + 1;
+        strcpy(jobsArr[totalbgJobs].jobname, arr[0]);
+        // jobsArr[totalbgJobs].status='R';
+        totalbgJobs++;
+return 0;
         // printf("%s\n",processes[0].jobname);
     }
 }
@@ -107,6 +143,7 @@ int foreground(char *cmd)
     if (pid < 0)
     {
         perror(RED "fork not working" RESET);
+        return -1;
     }
 
     else
@@ -119,6 +156,7 @@ int foreground(char *cmd)
             if (execvp(arr[0], arr) == -1)
             {
                 perror(RED "error in execvp, command not found" RESET);
+                return -1;
             }
         }
         else
@@ -126,5 +164,7 @@ int foreground(char *cmd)
             int lmao;
             waitpid(pid, &lmao, WUNTRACED);
         }
+        forepid=pidOfShell;
     }
+    return 0;
 }

@@ -367,6 +367,7 @@ int lsactual()
             struct dirent *token_main;
             total = 0;
             DIR *folder = opendir(dirname[x]);
+
             while (token_main = readdir(folder))
             {
 
@@ -380,6 +381,7 @@ int lsactual()
                 }
                 total += mainDir.st_blocks;
             }
+
             printf("Total: %ld\n", total / 2);
 
             n = scandir(dirname[x], &namelist, NULL, alphasort);
@@ -404,7 +406,8 @@ int lsactual()
                 {
                     perror(RED "ERROR IN ls -l -a <names>" RESET);
                     return -1;
-                }
+                }       
+
 
                 printf((S_ISDIR(st.st_mode)) ? "d" : "-");
                 printf((st.st_mode & S_IRUSR) ? "r" : "-");
@@ -497,6 +500,7 @@ int lsactual()
 
             // printf("%s\n", ans);
         }
+
     }
 }
 

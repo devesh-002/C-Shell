@@ -31,7 +31,13 @@ int printDetails()
     {
         strcpy(ans, mydir);
     }
+    if (printTime[0] != '\0')
+    {
+        strcat(ans, printTime);
+    }
+    printf("<" WHT "%s" BLU "@%s" YEL ":%s" RESET ">", name, sysname, ans);
+    if (printTime[0] != '\0')
 
-    printf("<"WHT"%s" BLU "@%s"YEL":%s"RESET">", name, sysname, ans);
+        printTime[0] = '\0';
     return 0;
 }
